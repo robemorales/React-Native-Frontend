@@ -16,3 +16,9 @@ export const saveUser = async (newUser) =>{
     });
     return await res.json()
 };
+
+export const deletUser=async(id)=>{
+    await fetch(`${API}/${id}`,{
+        method:'DELETE'
+    })
+}
