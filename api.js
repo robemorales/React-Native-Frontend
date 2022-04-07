@@ -5,3 +5,14 @@ const API = 'http://10.0.2.2:3000/users';
     return await resp.json()
        
 }
+
+export const saveUser = async (newUser) =>{
+    const res = await fetch(API,{
+        method:"POST",
+        headers:{
+            Accept: "application/json", "Content-Type":"application/json"
+        },
+        body: JSON.stringify(newUser)
+    });
+    return await res.json()
+};
