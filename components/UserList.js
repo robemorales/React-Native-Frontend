@@ -2,6 +2,7 @@ import React, {useState, useEffect} from 'react'
 import {FlatList, RefreshControl} from 'react-native'
 import UserItem from '../components/UserItems'
 import {getUser, deletUser} from '../api'
+import { useIsFocused } from '@react-navigation/native'
 
 const UserList =()=>{
     const [users, setUsers] = useState([]);
@@ -10,10 +11,11 @@ const UserList =()=>{
        const data =  await getUser();
        setUsers(data)
     }
+    const isFocused = useIsFocused();
     //funcion que se ejecuta cada vez que carga la pagina es lo primero que se ejecuta
     useEffect(()=>{
-       loadUser()
-    }, [])
+        loadUser()
+    }, [isFocused])
 
     const handleDelete = async(user_id) =>{
         await deletUser(user_id)

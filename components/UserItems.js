@@ -1,10 +1,14 @@
 import React from 'react'
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native'
 
+import {useNavigation} from '@react-navigation/native'
+
 const UserItems =({user, handleDelete}) =>{
+
+    const navigation = useNavigation()
     return (
         <View style ={styles.itemContainer}>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={()=> navigation.navigate('UserForm', {id: user.user_id})}>
                 <Text>
                     <Text style={styles.itemList}>{user.name}</Text>
                     <Text>  </Text>

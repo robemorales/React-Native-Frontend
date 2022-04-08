@@ -21,4 +21,21 @@ export const deletUser=async(id)=>{
     await fetch(`${API}/${id}`,{
         method:'DELETE'
     })
+};
+
+export const loadUserField = async(id)=>{
+    const res = await fetch(`${API}/${id}`)
+    return await res.json();
+    
+};
+export const updateUser = async(id, newUser)=>{
+   const res =  await fetch(`${API}/${id}`,{
+        method:'PUT',
+        headers:{
+            Accept: "application/json", "Content-Type":"application/json"
+        },
+        body: JSON.stringify(newUser)
+
+    });
+    return res
 }
