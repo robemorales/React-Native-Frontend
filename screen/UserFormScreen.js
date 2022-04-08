@@ -1,33 +1,42 @@
-import React, {useState}  from 'react';
+import React, {useState, useEffect}  from 'react';
 import {View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native'
 
 import Layout from '../components/Layout'
-import { saveUser } from '../api'
+import { saveUser, loadUserField, updateUser } from '../api'
 
-
-const UserFormScreen =({navigation})=>{
-    
+const UserFormScreen =({navigation, route})=>{
     const [users, setUsers] = useState({
-        name: '',
-        lastname: '',
-        address: '',
-        email: '',
-    })
-
+        name: "", 
+        lastname: "",
+        address: "",
+        email: "",
+    });
+    const [edit, setEdit] = useState(false);
+    
     const handleText = (name, value) =>{
         setUsers({...users,[name]: value});
-    }
-
-    const addUser=()=>{
-        if(users.name ==='' || users.lastname ==='' || users.address ==='' || users.email ===''){
-            alert('ERROR')
-        }else{
-            saveUser(users)
-            navigation.navigate('Home')
-
+    };
+    
+    const handleSubmit = async ()=>{
+          if(!edit){
+             await saveUser(users);
+              navigation.navigate("Home"); 
+          } else {
+             await updateUser(route.params.id, users);
+              navigation.navigate("Home");
+          }
+        };
+    
+    useEffect(()=>{
+        if(route.params && route.params.id){
+            navigation.setOptions({headerTitle: "Update User"});
+            setEdit(true);
+            (async()=>{
+                const user = await loadUserField(route.params.id);
+                setUsers({name: user[0].name, lastname: user[0].lastname, address: user[0].address, email: user[0].email})
+            })();
         }
-
-    }
+    },[])
 
     return(
         <Layout>
@@ -36,29 +45,43 @@ const UserFormScreen =({navigation})=>{
                 placeholder='Name'
                 placeholderTextColor='#546574'
                 onChangeText={(text) => handleText('name',text)}
+                value={users.name}
+                
             />
             <TextInput
                 style = {style.container}
                 placeholder='Last Name'
                 placeholderTextColor='#546574'
                 onChangeText={(text) => handleText('lastname',text)}
+                value={users.lastname}
             />
             <TextInput
                 style = {style.container}
                 placeholder='Address'
                 placeholderTextColor='#546574'
                 onChangeText={(text) => handleText('address',text)}
+                value={users.address}
             />
             <TextInput
                 style = {style.container}
                 placeholder='email'
                 placeholderTextColor='#546574'
                 onChangeText={(text) => handleText('email',text)}
+                value={users.email}
             />
-            <TouchableOpacity style ={style.buttonStyle} onPress={()=>addUser()} >
-                <Text style = {style.textStyle}>Save User</Text>
-            </TouchableOpacity>
-
+           {
+               !edit ?(
+                <TouchableOpacity style={style.saveButtonStyle} onPress={handleSubmit}>
+                    <Text style={style.textStyle}>Save User</Text>
+                </TouchableOpacity>
+               ):(
+                <TouchableOpacity style={style.updateButtonStyle} onPress={handleSubmit}>
+                    <Text style={style.textStyle}>Save User</Text>
+                </TouchableOpacity>
+               )
+           }
+            
+               
         </Layout>
     )
 }
@@ -76,13 +99,21 @@ const style = StyleSheet.create({
         borderRadius: 5,
         textAlign: 'center'
     },
-    buttonStyle:{
+    saveButtonStyle:{
         width:'90%',
         paddingTop: 10,
         paddingBottom: 10,
         borderRadius: 5,
         marginBottom: 10,
         backgroundColor: '#10ac84',
+    },
+    updateButtonStyle:{
+        width:'90%',
+        paddingTop: 10,
+        paddingBottom: 10,
+        borderRadius: 5,
+        marginBottom: 10,
+        backgroundColor: '#e58e26',
     },
     textStyle:{
         color:'#ffffff',
