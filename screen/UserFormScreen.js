@@ -4,6 +4,7 @@ import {View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native
 import Layout from '../components/Layout'
 import { saveUser, loadUserField, updateUser } from '../api'
 
+
 const UserFormScreen =({navigation, route})=>{
     const [users, setUsers] = useState({
         name: "", 
@@ -17,14 +18,22 @@ const UserFormScreen =({navigation, route})=>{
         setUsers({...users,[name]: value});
     };
     
-    const handleSubmit = async ()=>{
+    const handleSubmit = ()=>{
+        if(users.name === '' || users.lastname === '' || users.address === '' || users.email === '' ){
+            alert('Pleace insert all fields')
+
+        }else{
           if(!edit){
-             await saveUser(users);
-              navigation.navigate("Home"); 
+            //console.log('estoy aqui')
+             saveUser(users);
+             console.log('estoy aqui')  
+             navigation.navigate("Home"); 
           } else {
-             await updateUser(route.params.id, users);
-              navigation.navigate("Home");
+             updateUser(route.params.id, users);
+             navigation.navigate("Home");
           }
+          
+        }
         };
     
     useEffect(()=>{
@@ -76,7 +85,7 @@ const UserFormScreen =({navigation, route})=>{
                 </TouchableOpacity>
                ):(
                 <TouchableOpacity style={style.updateButtonStyle} onPress={handleSubmit}>
-                    <Text style={style.textStyle}>Save User</Text>
+                    <Text style={style.textStyle}>Update User</Text>
                 </TouchableOpacity>
                )
            }
